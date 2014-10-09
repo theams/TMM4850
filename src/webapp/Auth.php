@@ -5,6 +5,7 @@ namespace tdt4237\webapp;
 use tdt4237\webapp\models\User;
 use tdt4237\webapp\Hash;
 
+
 class Auth
 {
     function __construct()
@@ -56,7 +57,8 @@ class Auth
     static function isAdmin()
     {
         if (self::check()) {
-            return $_COOKIE['isadmin'] === 'yes';
+            return User::findByUser($_SESSION['user'])->isAdmin();
+         // return $_COOKIE['isadmin'] === 'yes';
         }
 
         throw new \Exception('Not logged in but called Auth::isAdmin() anyway');

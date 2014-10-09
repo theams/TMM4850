@@ -191,8 +191,10 @@ class User
 
     static function deleteByUsername($username)
     {
+        if (Auth::isAdmin()){
         $query = "DELETE FROM users WHERE user='$username' ";
         return self::$app->db->exec($query);
+        }
     }
 
     static function all()
