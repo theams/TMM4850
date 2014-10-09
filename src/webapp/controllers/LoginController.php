@@ -33,11 +33,11 @@ class LoginController extends Controller
 
             $isAdmin = Auth::user()->isAdmin();
 
-            if ($isAdmin) {
-                setcookie("isadmin", "yes");
-            } else {
-                setcookie("isadmin", "no");
-            }
+            //if ($isAdmin) {
+            //    setcookie("isadmin", "yes");
+            //} else {
+            //    setcookie("isadmin", "no");
+            //  }
 
             $this->app->flash('info', "You are now successfully logged in as $user.");
             $this->app->redirect('/');
