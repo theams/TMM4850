@@ -10,7 +10,7 @@ class User
 {
     const INSERT_QUERY = "INSERT INTO users(user, pass, email, age, bio, isadmin) VALUES(?,?,?,?,?,?)";
     const UPDATE_QUERY = "UPDATE users SET email=?, age=?, bio=?, isadmin=? WHERE id=?";
-    const FIND_BY_NAME = "SELECT * FROM users WHERE user='%s'";
+    const FIND_BY_NAME = "SELECT * FROM users WHERE user=?";
 
     const MIN_USER_LENGTH = 3;
 
@@ -169,9 +169,9 @@ class User
      */
     static function findByUser($username)
     {
-        $query = sprintf(self::FIND_BY_NAME, $username);
-        $result = self::$app->db->query($query, \PDO::FETCH_ASSOC);
-        $row = $result->fetch();
+        $stmt = self::$app->db->prepare(self::FIND_BY_NAME);
+        $stmt->execute(array($username));
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if($row == false) {
             return null;
