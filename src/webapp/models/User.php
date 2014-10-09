@@ -4,6 +4,8 @@ namespace tdt4237\webapp\models;
 
 use tdt4237\webapp\Hash;
 
+use tdt4237\webapp\Auth;
+
 class User
 {
     const INSERT_QUERY = "INSERT INTO users(user, pass, email, age, bio, isadmin) VALUES('%s', '%s', '%s' , '%s' , '%s', '%s')";
