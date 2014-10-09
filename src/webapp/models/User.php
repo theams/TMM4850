@@ -4,6 +4,8 @@ namespace tdt4237\webapp\models;
 
 use tdt4237\webapp\Hash;
 
+use tdt4237\webapp\Auth;
+
 class User
 {
     const INSERT_QUERY = "INSERT INTO users(user, pass, email, age, bio, isadmin) VALUES(?,?,?,?,?,?)";
@@ -180,8 +182,10 @@ class User
 
     static function deleteByUsername($username)
     {
+        if (Auth::isAdmin()){
         $query = "DELETE FROM users WHERE user='$username' ";
         return self::$app->db->exec($query);
+        }
     }
 
     static function all()
