@@ -32,10 +32,6 @@ class LoginController extends Controller
 
             $_SESSION['user'] = $user;
             $isAdmin = Auth::user()->isAdmin();
-            $this->app->config('cookies.lifetime', '20 minutes');
-            $this->app->config('cookies.secure', true);
-            $this->app->config('cookies.httponly', false);
-            $this->app->config('cookies.secret_key', 'secret');
 
 
             //if ($isAdmin) {
