@@ -69,12 +69,13 @@ class MovieReview
 
         if ($this->id === null) {
             $query = "INSERT INTO moviereviews (movieid, author, text) "
-                   . "VALUES ('$movieId', '$author', '$text')";
+                   . "VALUES (?, ?, ?)";
+            $stmt = self::$app->db->prepare($query);
+            $stmt->execute(array($movieId,$author,$text));
+            return $stmt;
         } else {
             // TODO: Update moviereview here
         }
-
-        return static::$app->db->exec($query);
     }
 
     static function makeEmpty()
@@ -87,12 +88,13 @@ class MovieReview
      */
     static function findByMovieId($id)
     {
-        $query = "SELECT * FROM moviereviews WHERE movieid = $id";
-        $results = self::$app->db->query($query);
+        $query = "SELECT * FROM moviereviews WHERE movieid = ?";
+        $stmt = self::$app->db->prepare($query);
+        $stmt->execute(array($id));
 
         $reviews = [];
 
-        foreach ($results as $row) {
+        foreach ($stmt as $row) {
             $review = self::makeFromRow($row);
             array_push($reviews, $review);
         }
