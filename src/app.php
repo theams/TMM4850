@@ -4,6 +4,11 @@ require_once __DIR__ . '/../vendor/autoload.php';
 $app = new \Slim\Slim([
     'templates.path' => __DIR__.'/webapp/templates/',
     'debug' => true,
+    //'debug' => false,
+    'cookies.lifetime' => '20 minutes',
+    'cookies.secure' => true,
+    'cookies.httponly' => false,
+    'cookies.secret_key' => 'secret',
     'view' => new \Slim\Views\Twig()
 ]);
 
