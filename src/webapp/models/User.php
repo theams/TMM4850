@@ -11,6 +11,7 @@ class User
     const FIND_BY_NAME = "SELECT * FROM users WHERE user='%s'";
 
     const MIN_USER_LENGTH = 3;
+    const MIN_PASS_LENGTH = 8;
 
     protected $id = null;
     protected $user;
@@ -156,6 +157,15 @@ class User
             array_push($validationErrors, 'Username can only contain letters and numbers');
         }
 
+        return $validationErrors;
+    }
+    
+    static function validatePass($pass, $validationErrors)
+    {
+        if(strlen($pass) < self::MIN_PASS_LENGTH) {
+            array_push($validationErrors, "Password too short. Min length is " . self::MIN_PASS_LENGTH);
+        }
+        
         return $validationErrors;
     }
 
