@@ -37,9 +37,10 @@ class UserController extends Controller
         $user->setHash($hashed);
 
         $validationErrors = User::validate($user);
+        $validationErrorsExtended = User::validatePass($pass, $validationErrors);
 
-        if (sizeof($validationErrors) > 0) {
-            $errors = join("<br>\n", $validationErrors);
+        if (sizeof($validationErrorsExtended) > 0) {
+            $errors = join("<br>\n", $validationErrorsExtended);
             $this->app->flashNow('error', $errors);
             $this->render('newUserForm.twig', ['username' => $username]);
         } else {

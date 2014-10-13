@@ -13,6 +13,7 @@ class User
     const FIND_BY_NAME = "SELECT * FROM users WHERE user=?";
 
     const MIN_USER_LENGTH = 3;
+    const MIN_PASS_LENGTH = 8;
     const MAX_USER_LENGTH = 20;
 
     protected $id = null;
@@ -153,6 +154,15 @@ class User
 
         return $validationErrors;
     }
+    
+    static function validatePass($pass, $validationErrors)
+    {
+        if(strlen($pass) < self::MIN_PASS_LENGTH) {
+            array_push($validationErrors, "Password too short. Min length is " . self::MIN_PASS_LENGTH);
+        }
+        
+        return $validationErrors;
+    }
 
     static function validateAge(User $user)
     {
@@ -221,4 +231,3 @@ class User
     }
 }
 User::$app = \Slim\Slim::getInstance();
-
