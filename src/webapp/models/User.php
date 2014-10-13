@@ -4,14 +4,17 @@ namespace tdt4237\webapp\models;
 
 use tdt4237\webapp\Hash;
 
+use tdt4237\webapp\Auth;
+
 class User
 {
-    const INSERT_QUERY = "INSERT INTO users(user, pass, email, age, bio, isadmin) VALUES('%s', '%s', '%s' , '%s' , '%s', '%s')";
-    const UPDATE_QUERY = "UPDATE users SET email='%s', age='%s', bio='%s', isadmin='%s' WHERE id='%s'";
-    const FIND_BY_NAME = "SELECT * FROM users WHERE user='%s'";
+    const INSERT_QUERY = "INSERT INTO users(user, pass, email, age, bio, isadmin) VALUES(?,?,?,?,?,?)";
+    const UPDATE_QUERY = "UPDATE users SET email=?, age=?, bio=?, isadmin=? WHERE id=?";
+    const FIND_BY_NAME = "SELECT * FROM users WHERE user=?";
 
     const MIN_USER_LENGTH = 3;
     const MIN_PASS_LENGTH = 8;
+    const MAX_USER_LENGTH = 20;
 
     protected $id = null;
     protected $user;
@@ -52,25 +55,14 @@ class User
     function save()
     {
         if ($this->id === null) {
-            $query = sprintf(self::INSERT_QUERY,
-                $this->user,
-                $this->pass,
-                $this->email,
-                $this->age,
-                $this->bio,
-                $this->isAdmin
-            );
+            $stmt = self::$app->db->prepare(self::INSERT_QUERY);
+            $stmt->execute(array($this->user,  $this->pass,  $this->email,  $this->age,  $this->bio,  $this->isAdmin));
         } else {
-            $query = sprintf(self::UPDATE_QUERY,
-                $this->email,
-                $this->age,
-                $this->bio,
-                $this->isAdmin,
-                $this->id
-            );
+            
+            $stmt = self::$app->db->prepare(self::UPDATE_QUERY);
+            $stmt->execute(array($this->email,  $this->age,  $this->bio,  $this->isAdmin,  $this->id));
         }
-
-        return self::$app->db->exec($query);
+        return $stmt;
     }
 
     function getId()
@@ -156,6 +148,9 @@ class User
         if (preg_match('/^[A-Za-z0-9_]+$/', $user->user) === 0) {
             array_push($validationErrors, 'Username can only contain letters and numbers');
         }
+        if (strlen($user->user) > self::MAX_USER_LENGTH) {
+            array_push($validationErrors, "Username too long. Maximum length is " . self::MAX_USER_LENGTH);
+        }
 
         return $validationErrors;
     }
@@ -188,9 +183,9 @@ class User
      */
     static function findByUser($username)
     {
-        $query = sprintf(self::FIND_BY_NAME, $username);
-        $result = self::$app->db->query($query, \PDO::FETCH_ASSOC);
-        $row = $result->fetch();
+        $stmt = self::$app->db->prepare(self::FIND_BY_NAME);
+        $stmt->execute(array($username));
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if($row == false) {
             return null;
@@ -201,8 +196,10 @@ class User
 
     static function deleteByUsername($username)
     {
+        if (Auth::isAdmin()){
         $query = "DELETE FROM users WHERE user='$username' ";
         return self::$app->db->exec($query);
+        }
     }
 
     static function all()

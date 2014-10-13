@@ -40,10 +40,12 @@ class Movie
      */
     static function find($id)
     {
-        $query = "SELECT * FROM movies WHERE id = $id";
-        $result = self::$app->db->query($query);
+        $query = "SELECT * FROM movies WHERE id = ?";
+        $stmt = self::$app->db->prepare($query);
+        $stmt->execute(array($id));
+        //$result = self::$app->db->query($query);
 
-        return self::makeFromRow($result->fetch());
+        return self::makeFromRow($stmt->fetch());
     }
 
     /**

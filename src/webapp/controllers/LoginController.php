@@ -29,15 +29,16 @@ class LoginController extends Controller
         $pass = $request->post('pass');
 
         if (Auth::checkCredentials($user, $pass)) {
-            $_SESSION['user'] = $user;
 
+            $_SESSION['user'] = $user;
             $isAdmin = Auth::user()->isAdmin();
 
-            if ($isAdmin) {
-                setcookie("isadmin", "yes");
-            } else {
-                setcookie("isadmin", "no");
-            }
+
+            //if ($isAdmin) {
+            //    setcookie("isadmin", "yes");
+            //} else {
+            //    setcookie("isadmin", "no");
+            //  }
 
             $this->app->flash('info', "You are now successfully logged in as $user.");
             $this->app->redirect('/');
@@ -45,5 +46,6 @@ class LoginController extends Controller
             $this->app->flashNow('error', 'Incorrect user/pass combination.');
             $this->render('login.twig', []);
         }
+
     }
 }
