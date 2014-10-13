@@ -221,3 +221,4 @@ class User
     }
 }
 User::$app = \Slim\Slim::getInstance();
+

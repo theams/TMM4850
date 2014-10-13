@@ -88,8 +88,11 @@ class UserController extends Controller
         if ($this->app->request->isPost()) {
             $request = $this->app->request;
             $email = $request->post('email');
+            $email = $this->xecho($email);
             $bio = $request->post('bio');
+            $bio = $this->xecho($bio);
             $age = $request->post('age');
+            $age = $this->xecho($age);
 
             $user->setEmail($email);
             $user->setBio($bio);
@@ -104,5 +107,14 @@ class UserController extends Controller
         }
 
         $this->render('edituser.twig', ['user' => $user]);
+    }
+    function xssafe($data,$encoding='UTF-8')
+    {
+       return htmlspecialchars($data,ENT_QUOTES | ENT_HTML401,$encoding);
+    }
+
+    function xecho($data)
+    {
+       return $this->xssafe($data);
     }
 }
