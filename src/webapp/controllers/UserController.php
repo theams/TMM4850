@@ -23,26 +23,28 @@ class UserController extends Controller
             $this->app->redirect('/');
         }
     }
+    
+
 
     function create()
     {
         $request = $this->app->request;
         $username = $request->post('user');
         $pass = $request->post('pass');
-        $email = $request->post('email');
+        $securityquestion = $request->post('securityquestion');
+        $securityanwser = $request->post('securityanswer');
 
         $hashed = Hash::make($pass);
+        $hashedanwser = Hash::make($securityanwser);
 
-        $user = User::makeEmpty();
-        $user->setUsername($username);
-        $user->setHash($hashed);
-        $user->setEmail($email);
+        $user = $this->makeUserData($hashed,$hashedanwser,$securityquestion,$username);
 
         $validationErrors = User::validate($user);
-        $validationErrorsExtended = User::validatePass($pass, $validationErrors);
+        $validationErrorsExtended = User::validateSecurity($securityquestion, $securityanwser, $validationErrors);
+        $validationErrorsExtended2 = User::validatePass($pass, $validationErrorsExtended);
 
-        if (sizeof($validationErrorsExtended) > 0) {
-            $errors = join("<br>\n", $validationErrorsExtended);
+        if (sizeof($validationErrorsExtended2) > 0) {
+            $errors = join("<br>\n", $validationErrorsExtended2);
             $this->app->flashNow('error', $errors);
             $this->render('newUserForm.twig', ['username' => $username]);
         } else {
@@ -51,7 +53,17 @@ class UserController extends Controller
             $this->app->redirect('/login');
         }
     }
-
+    
+    function makeUserData($hashed,$hashedanswer,$securityquestion,$username){
+        $user = User::makeEmpty();
+        
+        $user->setUsername($username);
+        $user->setHash($hashed);
+        $user->setSecurityQuestion($securityquestion);
+        $user->setSecurityAnswer($hashedanswer);
+        return $user;
+    }
+        
     function all()
     {
         $users = User::all();

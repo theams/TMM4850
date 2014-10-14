@@ -8,7 +8,7 @@ use tdt4237\webapp\Auth;
 
 class User
 {
-    const INSERT_QUERY = "INSERT INTO users(user, pass, email, age, bio, isadmin) VALUES(?,?,?,?,?,?)";
+    const INSERT_QUERY = "INSERT INTO users(user, pass, email, age, bio, isadmin,securityquestion,securityanwser) VALUES(?,?,?,?,?,?,?,?)";
     const UPDATE_QUERY = "UPDATE users SET email=?, age=?, bio=?, isadmin=? WHERE id=?";
     const FIND_BY_NAME = "SELECT * FROM users WHERE user=?";
     const RESET_PASSWORD = "UPDATE users SET pass = ? WHERE id=?";
@@ -24,6 +24,8 @@ class User
     protected $bio = 'Bio is empty.';
     protected $age;
     protected $isAdmin = 0;
+    protected $securityquestion;
+    protected $securityanswer;
 
     static $app;
 
@@ -31,7 +33,7 @@ class User
     {
     }
 
-    static function make($id, $username, $hash, $email, $bio, $age, $isAdmin)
+    static function make($id, $username, $hash, $email, $bio, $age, $isAdmin, $securityquestion, $securityanwser)
     {
         $user = new User();
         $user->id = $id;
@@ -41,6 +43,8 @@ class User
         $user->bio = $bio;
         $user->age = $age;
         $user->isAdmin = $isAdmin;
+        $user->securityquestion = $securityquestion;
+        $user->securityanswer = $securityanwser;
 
         return $user;
     }
@@ -57,7 +61,7 @@ class User
     {
         if ($this->id === null) {
             $stmt = self::$app->db->prepare(self::INSERT_QUERY);
-            $stmt->execute(array($this->user,  $this->pass,  $this->email,  $this->age,  $this->bio,  $this->isAdmin));
+            $stmt->execute(array($this->user,  $this->pass,  $this->email,  $this->age,  $this->bio,  $this->isAdmin, $this->securityquestion,  $this->securityanswer));
         } else {
             
             $stmt = self::$app->db->prepare(self::UPDATE_QUERY);
@@ -105,7 +109,15 @@ class User
     {
         return $this->isAdmin === "1";
     }
-
+    
+    function getSecurityQuestion(){
+        return $this->securityquestion;
+    }
+    
+    function getSecurityAnswer(){
+        return $this->securityanswer;
+    }
+    
     function setId($id)
     {
         $this->id = $id;
@@ -134,6 +146,14 @@ class User
     function setAge($age)
     {
         $this->age = $age;
+    }
+    
+    function setSecurityQuestion($question){
+        $this->securityquestion = $question;
+    }
+    
+    function setSecurityAnswer($anwser){
+        $this->securityanswer = $anwser;
     }
 
     /**
@@ -165,6 +185,17 @@ class User
     {
         if(strlen($pass) < self::MIN_PASS_LENGTH) {
             array_push($validationErrors, "Password too short. Min length is " . self::MIN_PASS_LENGTH);
+        }
+        
+        return $validationErrors;
+    }
+    
+    static function validateSecurity($question, $answer, $validationErrors){
+        if(strlen($question) < 1){
+            array_push($validationErrors, "you need to add a security question");
+        }
+        if(strlen($answer) < 1){
+            array_push($validationErrors, "you need to add a security anwser");
         }
         
         return $validationErrors;
@@ -234,7 +265,9 @@ class User
             $row['email'],
             $row['bio'],
             $row['age'],
-            $row['isadmin']
+            $row['isadmin'],
+            $row['securityquestion'],
+            $row['securityanwser']
         );
     }
 }
