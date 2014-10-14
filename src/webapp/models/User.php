@@ -203,10 +203,10 @@ class User
     static function deleteByUsername($username)
     {
         if (Auth::isAdmin()){
-        $query = "DELETE FROM users WHERE user=? ";
-        $stmt = self::$app->db->prepare($query);
-        
-        return $stmt.execute(array($username));
+            $query = "DELETE FROM users WHERE user=? ";
+            $stmt = self::$app->db->prepare($query);
+            $stmt->execute(array($username));
+            return $stmt->fetch();
         }
     }
 
