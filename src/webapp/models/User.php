@@ -11,7 +11,8 @@ class User
     const INSERT_QUERY = "INSERT INTO users(user, pass, email, age, bio, isadmin) VALUES(?,?,?,?,?,?)";
     const UPDATE_QUERY = "UPDATE users SET email=?, age=?, bio=?, isadmin=? WHERE id=?";
     const FIND_BY_NAME = "SELECT * FROM users WHERE user=?";
-
+    const RESET_PASSWORD = "UPDATE users SET pass = ? WHERE id=?";
+    
     const MIN_USER_LENGTH = 3;
     const MIN_PASS_LENGTH = 8;
     const MAX_USER_LENGTH = 20;
@@ -63,6 +64,11 @@ class User
             $stmt->execute(array($this->email,  $this->age,  $this->bio,  $this->isAdmin,  $this->id));
         }
         return $stmt;
+    }
+    
+    function resetPassword(){
+        $stmt = self::$app->db->prepare(self::RESET_PASSWORD);
+        $stmt->execute(array($this->pass,  $this->id));
     }
 
     function getId()
@@ -197,8 +203,10 @@ class User
     static function deleteByUsername($username)
     {
         if (Auth::isAdmin()){
-        $query = "DELETE FROM users WHERE user='$username' ";
-        return self::$app->db->exec($query);
+        $query = "DELETE FROM users WHERE user=? ";
+        $stmt = self::$app->db->prepare($query);
+        
+        return $stmt.execute(array($username));
         }
     }
 

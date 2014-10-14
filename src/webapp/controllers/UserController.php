@@ -29,12 +29,14 @@ class UserController extends Controller
         $request = $this->app->request;
         $username = $request->post('user');
         $pass = $request->post('pass');
+        $email = $request->post('email');
 
         $hashed = Hash::make($pass);
 
         $user = User::makeEmpty();
         $user->setUsername($username);
         $user->setHash($hashed);
+        $user->setEmail($email);
 
         $validationErrors = User::validate($user);
         $validationErrorsExtended = User::validatePass($pass, $validationErrors);
