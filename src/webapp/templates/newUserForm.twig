@@ -10,13 +10,22 @@
 <form action="" method="POST">
 
 <label>Username: </label>
-<input type="text" name="user" value="{{ username|raw }}"> <br />
-<label>sequrity Question: </label>
-<input type="text" name="securityquestion"> <br />
+<input type="text" name="user" value="{{ username|raw }}" required> <br />
+<label>Security Question:</label>
+<select name="securityquestion" required>
+    <option value="What is the first name of the person you first kissed?">What is the first name of the person you first kissed?</option>
+    <option value="What is the last name of the teacher who gave you your first failing grade?">What is the last name of the teacher who gave you your first failing grade?</option>
+    <option value="What is the name of the place your wedding reception was held?">What is the name of the place your wedding reception was held?</option>
+    <option value="What is the name of the first beach you visited?">What is the name of the first beach you visited?</option>
+    <option vlaue="In what city or town did you meet your spouse/partner?">In what city or town did you meet your spouse/partner?</option>
+    <option value="What was the make and model of your first car?">What was the make and model of your first car?</option>
+    <option value="What was your maternal grandfather’s first name?">What was your maternal grandfather’s first name?</option>
+    <option value="In what city or town does your nearest sibling live?">In what city or town does your nearest sibling live?</option>
+</select> <br />
 <label>sequrity answer: </label>
-<input type="password" name="securityanswer"> <br />
+<input type="password" name="securityanswer" required> <br />
 <label>Password: </label>
-<input type="password" name="pass"> <br />
+<input type="password" name="pass" required> <br />
 <input type="submit" name="submit" value="Create new user">
 </form>
 {% endblock %}
