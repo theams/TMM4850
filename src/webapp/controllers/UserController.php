@@ -23,23 +23,28 @@ class UserController extends Controller
             $this->app->redirect('/');
         }
     }
+    
+
 
     function create()
     {
         $request = $this->app->request;
         $username = $request->post('user');
         $pass = $request->post('pass');
+        $securityquestion = $request->post('securityquestion');
+        $securityanwser = $request->post('securityanswer');
 
         $hashed = Hash::make($pass);
+        $hashedanwser = Hash::make($securityanwser);
 
-        $user = User::makeEmpty();
-        $user->setUsername($username);
-        $user->setHash($hashed);
+        $user = $this->makeUserData($hashed,$hashedanwser,$securityquestion,$username);
 
         $validationErrors = User::validate($user);
+        $validationErrorsExtended = User::validateSecurity($securityquestion, $securityanwser, $validationErrors);
+        $validationErrorsExtended2 = User::validatePass($pass, $validationErrorsExtended);
 
-        if (sizeof($validationErrors) > 0) {
-            $errors = join("<br>\n", $validationErrors);
+        if (sizeof($validationErrorsExtended2) > 0) {
+            $errors = join("<br>\n", $validationErrorsExtended2);
             $this->app->flashNow('error', $errors);
             $this->render('newUserForm.twig', ['username' => $username]);
         } else {
@@ -48,7 +53,17 @@ class UserController extends Controller
             $this->app->redirect('/login');
         }
     }
-
+    
+    function makeUserData($hashed,$hashedanswer,$securityquestion,$username){
+        $user = User::makeEmpty();
+        
+        $user->setUsername($username);
+        $user->setHash($hashed);
+        $user->setSecurityQuestion($securityquestion);
+        $user->setSecurityAnswer($hashedanswer);
+        return $user;
+    }
+        
     function all()
     {
         $users = User::all();
@@ -88,8 +103,11 @@ class UserController extends Controller
         if ($this->app->request->isPost()) {
             $request = $this->app->request;
             $email = $request->post('email');
+            $email = $this->xecho($email);
             $bio = $request->post('bio');
+            $bio = $this->xecho($bio);
             $age = $request->post('age');
+            $age = $this->xecho($age);
 
             $user->setEmail($email);
             $user->setBio($bio);
@@ -104,5 +122,14 @@ class UserController extends Controller
         }
 
         $this->render('edituser.twig', ['user' => $user]);
+    }
+    function xssafe($data,$encoding='UTF-8')
+    {
+       return htmlspecialchars($data,ENT_QUOTES | ENT_HTML401,$encoding);
+    }
+
+    function xecho($data)
+    {
+       return $this->xssafe($data);
     }
 }
