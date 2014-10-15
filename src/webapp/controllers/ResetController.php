@@ -25,15 +25,29 @@ class ResetController extends Controller
         $pass = $request->post('pass');
 
         $user = User::findByUser($username);
-        $question = $user->getSecurityQuestion();
         
         if($pass === null){
+            if ($user === null){
+                $this->app->flashNow('error','invalid username');
+                $this->render('resetPassword.twig',['username' => $username]);
+                return;
+            }
+            $question = $user->getSecurityQuestion();
             $this->render('resetPassword.twig',['username' => $username,'question'=>$question,'user' => $user]);
             return;
         }
+        $question = $user->getSecurityQuestion();
         if($this->checkIfAnwserIsCorrect($answer,$user)){
-            $this->doTheReset($pass,$user);
+            $error = User::validatePass($pass, []);
+            if(sizeof($error) <1){
+                $this->doTheReset($pass,$user);
+            }else{
+                $errors = join("", $error);
+                $this->app->flashNow('error',$errors);
+                $this->render('resetPassword.twig',['username'=> $username,'question'=>$question,'user' => $user]);
+            }
         }else{
+            $this->app->flashNow('error','wrong answer');
             $this->render('resetPassword.twig',['username' => $username,'question'=>$question,'user' => $user]);
         }
     }
