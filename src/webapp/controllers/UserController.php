@@ -99,7 +99,6 @@ class UserController extends Controller
         if (! $user) {
             throw new \Exception("Unable to fetch logged in user's object from db.");
         }
-
         if ($this->app->request->isPost()) {
             $request = $this->app->request;
             $email = $request->post('email');
@@ -108,20 +107,41 @@ class UserController extends Controller
             $bio = $this->xecho($bio);
             $age = $request->post('age');
             $age = $this->xecho($age);
+            $imageurl = $this->xecho("web/profilepictures/". $user->getUserName().".".basename( $_FILES["uploadFile"]["name"]));
 
             $user->setEmail($email);
             $user->setBio($bio);
             $user->setAge($age);
+            $user->setImageurl($imageurl);
 
             if (! User::validateAge($user)) {
                 $this->app->flashNow('error', 'Age must be between 0 and 150.');
+
             } else {
+
+                $this->uploadeprofilepicture( $imageurl);
                 $user->save();
                 $this->app->flashNow('info', 'Your profile was successfully saved.');
             }
         }
-
         $this->render('edituser.twig', ['user' => $user]);
+    }
+    function uploadeprofilepicture( $imageurl ){
+        $uploadOK = 1;
+
+        //fungerer ikke, dersom bildet er for stort så krasjer hele siden, men vet ikke hvordan jeg fikser det
+      //  if($_FILES["uploadFile"]["size"]>500000){
+      //      $this->app->flashNow('info', "Image size is too big.");
+       //     $uploadOK = 0;
+       // }
+        //fungerer ikke og veit ikke hvorfor
+        //if($_FILES["uploadFile"]["type"]==="image/gif"){
+        //    $this->app->flashNow('info', "Image format is not accepted.");
+         //   $uploadOK = 0;
+        //}
+        if ($uploadOK===1){
+        move_uploaded_file($_FILES['uploadFile']['tmp_name'], $imageurl);
+        }
     }
     function xssafe($data,$encoding='UTF-8')
     {
@@ -132,4 +152,4 @@ class UserController extends Controller
     {
        return $this->xssafe($data);
     }
-}
+   }
