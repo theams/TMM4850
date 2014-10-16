@@ -26,7 +26,9 @@ class LoginController extends Controller
     {
         $request = $this->app->request;
         $user = $request->post('user');
+        $user = $this->xecho($user);
         $pass = $request->post('pass');
+        //$pass = $this->xecho($pass);
 
         if (Auth::checkCredentials($user, $pass)) {
 
@@ -47,5 +49,14 @@ class LoginController extends Controller
             $this->render('login.twig', []);
         }
 
+    }
+    function xssafe($data,$encoding='UTF-8')
+    {
+       return htmlspecialchars($data,ENT_QUOTES | ENT_HTML401,$encoding);
+    }
+
+    function xecho($data)
+    {
+       return $this->xssafe($data);
     }
 }

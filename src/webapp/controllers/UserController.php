@@ -30,9 +30,13 @@ class UserController extends Controller
     {
         $request = $this->app->request;
         $username = $request->post('user');
+        $username = $this->xecho($username);
         $pass = $request->post('pass');
+        //$pass = xecho($pass);
         $securityquestion = $request->post('securityquestion');
+        $securityquestion = $this->xecho($securityquestion);
         $securityanwser = $request->post('securityanswer');
+        $securityanwser = $this->xecho($securityanwser);
 
         $hashed = Hash::make($pass);
         $hashedanwser = Hash::make($securityanwser);
@@ -104,8 +108,10 @@ class UserController extends Controller
             $request = $this->app->request;
             $email = $request->post('email');
             $email = $this->xecho($email);
+
             $bio = $request->post('bio');
             $bio = $this->xecho($bio);
+
             $age = $request->post('age');
             $age = $this->xecho($age);
 

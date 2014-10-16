@@ -15,6 +15,7 @@ class IndexController extends Controller
     {
         $request = $this->app->request;
         $msg = $request->get('msg');
+        $msg = htmlspecialchars($msg, ENT_QUOTES);
 
         $variables = [];
 
@@ -23,5 +24,7 @@ class IndexController extends Controller
         }
 
         $this->render('index.twig', $variables);
+        $this->render('index.twig', []);
+
     }
 }
