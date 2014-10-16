@@ -203,7 +203,7 @@ class User
             array_push($validationErrors, "you need to add a security question");
         }
         if(strlen($answer) < 1){
-            array_push($validationErrors, "you need to add a security anwser");
+            array_push($validationErrors, "you need to add a security answer");
         }
         
         return $validationErrors;
