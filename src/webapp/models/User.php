@@ -178,6 +178,9 @@ class User
         if (strlen($user->user) < self::MIN_USER_LENGTH) {
             array_push($validationErrors, "Username too short. Min length is " . self::MIN_USER_LENGTH);
         }
+        if (self::findByUser($user->user)!=null){
+             array_push($validationErrors, "Username ".$user->user ." already exist");
+        }
 
         if (preg_match('/^[A-Za-z0-9_]+$/', $user->user) === 0) {
             array_push($validationErrors, 'Username can only contain letters and numbers');
