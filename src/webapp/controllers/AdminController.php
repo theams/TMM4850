@@ -32,6 +32,7 @@ class AdminController extends Controller
 
     function delete($username)
     {
+        $username = htmlspecialchars($username, ENT_QUOTES);
         if (User::deleteByUsername($username) === 1) {
             $this->app->flash('info', "Sucessfully deleted '$username'");
         } else {

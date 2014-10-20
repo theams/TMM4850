@@ -82,7 +82,9 @@ class UserController extends Controller
 
     function show($username)
     {
+        $username = $this->xecho($username);
         $user = User::findByUser($username);
+
 
         $this->render('showuser.twig', [
             'user' => $user,
