@@ -9,13 +9,15 @@ use tdt4237\webapp\Auth;
 class User
 {
     const INSERT_QUERY = "INSERT INTO users(user, pass, email, age, bio, isadmin, securityquestion, securityanwser, imageurl) VALUES(?,?,?,?,?,?,?,?,?)";
-    const UPDATE_QUERY = "UPDATE users SET email=?, age=?, bio=?, isadmin=? WHERE id=?";
+    const UPDATE_QUERY = "UPDATE users SET email=?, age=?, bio=?, isadmin=?, imageurl=? WHERE id=?";
     const FIND_BY_NAME = "SELECT * FROM users WHERE user=?";
     const RESET_PASSWORD = "UPDATE users SET pass = ? WHERE id=?";
     
     const MIN_USER_LENGTH = 3;
     const MIN_PASS_LENGTH = 8;
     const MAX_USER_LENGTH = 20;
+    
+    const DEFAULT_IMG_URL = "defaultProfileImg.jpg";
 
     protected $id = null;
     protected $user;
@@ -67,7 +69,7 @@ class User
         } else {
             
             $stmt = self::$app->db->prepare(self::UPDATE_QUERY);
-            $stmt->execute(array($this->email,  $this->age,  $this->bio,  $this->isAdmin,  $this->id));
+            $stmt->execute(array($this->email,  $this->age,  $this->bio,  $this->isAdmin,  $this->imageurl,  $this->id));
         }
         return $stmt;
     }
@@ -266,6 +268,8 @@ class User
 
     static function makeFromSql($row)
     {
+        $imgurl = ($row['imageurl'] == '' ? $imageurlNew = self::DEFAULT_IMG_URL  : $row['imageurl']);
+        
         return User::make(
             $row['id'],
             $row['user'],
@@ -276,7 +280,7 @@ class User
             $row['isadmin'],
             $row['securityquestion'],
             $row['securityanwser'],
-            $row['imageurl']
+            $imgurl
         );
     }
 }

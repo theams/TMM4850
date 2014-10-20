@@ -113,7 +113,8 @@ class UserController extends Controller
 
             $age = $request->post('age');
             $age = $this->xecho($age);
-            $imageurl = $this->xecho("web/profilepictures/". $user->getUserName().".".basename( $_FILES["uploadFile"]["name"]));
+            //$imageurl = $this->xecho("web/profilepictures/". $user->getUserName().".".basename( $_FILES["uploadFile"]["name"]));
+            $imageurl = $this->xecho($user->getUserName().".".basename( $_FILES["uploadFile"]["name"]));
 
             $user->setEmail($email);
             $user->setBio($bio);
@@ -125,9 +126,10 @@ class UserController extends Controller
 
             } else {
 
-                $this->uploadeprofilepicture( $imageurl);
-                $user->save();
-                $this->app->flashNow('info', 'Your profile was successfully saved.');
+                if($this->uploadeprofilepicture($imageurl)) {
+                    $user->save();
+                    $this->app->flashNow('info', 'Your profile was successfully saved.');
+                }
             }
         }
         $this->render('edituser.twig', ['user' => $user]);
@@ -135,18 +137,63 @@ class UserController extends Controller
     function uploadeprofilepicture( $imageurl ){
         $uploadOK = 1;
 
+        if(basename( $_FILES["uploadFile"]["name"]) === "") {
+            return true;
+        }
+        
+        $validationErrors = [];
+        
+        switch ($_FILES['uploadFile']['error']) {
+        case UPLOAD_ERR_OK:
+            break;
+        case UPLOAD_ERR_NO_FILE:
+            return false;
+            //array_push($validationErrors, 'No file sent.');
+            //$uploadOK = 0;
+            //break;
+        case UPLOAD_ERR_INI_SIZE:
+        case UPLOAD_ERR_FORM_SIZE:
+            //array_push($validationErrors, 'Exceeded filesize limit.');
+            array_push($validationErrors, "Image size is too big.");
+            break;
+        default:
+            array_push($validationErrors, 'An error occurred.');
+        }
+        
+        if(sizeof($validationErrors) > 0) {
+            $errors = join("<br>\n", $validationErrors);
+            $this->app->flashNow('error', $errors);
+            return false;
+        }
+        
+        
         //fungerer ikke, dersom bildet er for stort så krasjer hele siden, men vet ikke hvordan jeg fikser det
-      //  if($_FILES["uploadFile"]["size"]>500000){
-      //      $this->app->flashNow('info', "Image size is too big.");
-       //     $uploadOK = 0;
-       // }
-        //fungerer ikke og veit ikke hvorfor
-        //if($_FILES["uploadFile"]["type"]==="image/gif"){
-        //    $this->app->flashNow('info', "Image format is not accepted.");
-         //   $uploadOK = 0;
-        //}
+        if($_FILES["uploadFile"]["size"]>500000){
+            array_push($validationErrors, "Image size is too big.");
+            $uploadOK = 0;
+        }
+        
+        /*
+        $imageinfo = getimagesize($_FILES['uploadFile']['tmp_name']);
+        if($imageinfo['mime'] != 'image/gif' && $imageinfo['mime'] != 'image/jpeg'&&
+                $imageinfo['mime'] != 'image/jpg'&& $imageinfo['mime'] != 'image/png') {
+            array_push($validationErrors, "Image format is not accepted.");
+            $uploadOK = 0;
+        }
+        */
+        
+        if(!($_FILES["uploadFile"]["type"]==="image/gif" ||
+                $_FILES["uploadFile"]["type"]==="image/png" ||
+                $_FILES["uploadFile"]["type"]==="image/jpeg")){
+            array_push($validationErrors, "Image format is not accepted.");
+            $uploadOK = 0;
+        }
         if ($uploadOK===1){
-        move_uploaded_file($_FILES['uploadFile']['tmp_name'], $imageurl);
+            return move_uploaded_file($_FILES['uploadFile']['tmp_name'], "web/profilepictures/". $imageurl);
+        }
+        else {
+            $errors = join("<br>\n", $validationErrors);
+            $this->app->flashNow('error', $errors);
         }
     }
     function xssafe($data,$encoding='UTF-8')

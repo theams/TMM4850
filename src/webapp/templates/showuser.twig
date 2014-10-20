@@ -16,6 +16,7 @@
             <th>Email</th>
             <th>Bio</th>
             <th>Age</th>
+            <th>Profile picture</th>
         </tr>
             <tr>
             <td>{{ user.id|raw }}</td>
@@ -24,6 +25,7 @@
             <td>{{ user.email|raw }}</td>
             <td>{{ user.bio|raw }}</td>
             <td>{{ user.age|raw }}</td>
+            <td><img src="/profilepictures/{{ user.imageurl }}" width="192"> </td>
         </tr>
     </table>
 {% else %}
