@@ -8,7 +8,7 @@ use tdt4237\webapp\Auth;
 
 class User
 {
-    const INSERT_QUERY = "INSERT INTO users(user, pass, email, age, bio, isadmin,securityquestion,securityanwser) VALUES(?,?,?,?,?,?,?,?)";
+    const INSERT_QUERY = "INSERT INTO users(user, pass, email, age, bio, isadmin, securityquestion, securityanwser, imageurl) VALUES(?,?,?,?,?,?,?,?,?)";
     const UPDATE_QUERY = "UPDATE users SET email=?, age=?, bio=?, isadmin=? WHERE id=?";
     const FIND_BY_NAME = "SELECT * FROM users WHERE user=?";
     const RESET_PASSWORD = "UPDATE users SET pass = ? WHERE id=?";
@@ -26,6 +26,7 @@ class User
     protected $isAdmin = 0;
     protected $securityquestion;
     protected $securityanswer;
+    protected $imageurl;
 
     static $app;
 
@@ -33,7 +34,7 @@ class User
     {
     }
 
-    static function make($id, $username, $hash, $email, $bio, $age, $isAdmin, $securityquestion, $securityanwser)
+    static function make($id, $username, $hash, $email, $bio, $age, $isAdmin, $securityquestion, $securityanwser, $imageurl)
     {
         $user = new User();
         $user->id = $id;
@@ -45,6 +46,7 @@ class User
         $user->isAdmin = $isAdmin;
         $user->securityquestion = $securityquestion;
         $user->securityanswer = $securityanwser;
+        $user->imageurl = $imageurl;
 
         return $user;
     }
@@ -61,7 +63,7 @@ class User
     {
         if ($this->id === null) {
             $stmt = self::$app->db->prepare(self::INSERT_QUERY);
-            $stmt->execute(array($this->user,  $this->pass,  $this->email,  $this->age,  $this->bio,  $this->isAdmin, $this->securityquestion,  $this->securityanswer));
+            $stmt->execute(array($this->user,  $this->pass,  $this->email,  $this->age,  $this->bio,  $this->isAdmin, $this->securityquestion,  $this->securityanswer, $this->imageurl));
         } else {
             
             $stmt = self::$app->db->prepare(self::UPDATE_QUERY);
@@ -117,7 +119,10 @@ class User
     function getSecurityAnswer(){
         return $this->securityanswer;
     }
-    
+
+    function getImageurl(){
+        return $this -> imageurl;
+    }
     function setId($id)
     {
         $this->id = $id;
@@ -143,6 +148,7 @@ class User
         $this->bio = $bio;
     }
 
+
     function setAge($age)
     {
         $this->age = $age;
@@ -155,7 +161,9 @@ class User
     function setSecurityAnswer($anwser){
         $this->securityanswer = $anwser;
     }
-
+    function setImageurl($imageurl){
+        $this -> imageurl = $imageurl;
+    }
     /**
      * The caller of this function can check the length of the returned 
      * array. If array length is 0, then all checks passed.
@@ -195,7 +203,7 @@ class User
             array_push($validationErrors, "you need to add a security question");
         }
         if(strlen($answer) < 1){
-            array_push($validationErrors, "you need to add a security anwser");
+            array_push($validationErrors, "you need to add a security answer");
         }
         
         return $validationErrors;
@@ -268,7 +276,8 @@ class User
             $row['age'],
             $row['isadmin'],
             $row['securityquestion'],
-            $row['securityanwser']
+            $row['securityanwser'],
+            $row['imageurl']
         );
     }
 }

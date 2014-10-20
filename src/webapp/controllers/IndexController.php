@@ -24,6 +24,7 @@ class IndexController extends Controller
         }
 
         $this->render('index.twig', $variables);
+        //$this->render('index.twig', []);
 
     }
 }
