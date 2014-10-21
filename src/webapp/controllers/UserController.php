@@ -107,30 +107,32 @@ class UserController extends Controller
         }
         if ($this->app->request->isPost()) {
             $request = $this->app->request;
-            $email = $request->post('email');
-            $email = $this->xecho($email);
+            if($request->post('csrfToken') == 2014){
+                $email = $request->post('email');
+                $email = $this->xecho($email);
 
-            $bio = $request->post('bio');
-            $bio = $this->xecho($bio);
+                $bio = $request->post('bio');
+                $bio = $this->xecho($bio);
 
-            $age = $request->post('age');
-            $age = $this->xecho($age);
-            //$imageurl = $this->xecho("web/profilepictures/". $user->getUserName().".".basename( $_FILES["uploadFile"]["name"]));
-            $imageurl = $this->xecho($user->getUserName().".".basename( $_FILES["uploadFile"]["name"]));
+                $age = $request->post('age');
+                $age = $this->xecho($age);
+                //$imageurl = $this->xecho("web/profilepictures/". $user->getUserName().".".basename( $_FILES["uploadFile"]["name"]));
+                $imageurl = $this->xecho($user->getUserName().".".basename( $_FILES["uploadFile"]["name"]));
 
-            $user->setEmail($email);
-            $user->setBio($bio);
-            $user->setAge($age);
-            $user->setImageurl($imageurl);
+                $user->setEmail($email);
+                $user->setBio($bio);
+                $user->setAge($age);
+                $user->setImageurl($imageurl);
 
-            if (! User::validateAge($user)) {
-                $this->app->flashNow('error', 'Age must be between 0 and 150.');
+                if (! User::validateAge($user)) {
+                    $this->app->flashNow('error', 'Age must be between 0 and 150.');
 
-            } else {
+                } else {
 
-                if($this->uploadeprofilepicture($imageurl)) {
-                    $user->save();
-                    $this->app->flashNow('info', 'Your profile was successfully saved.');
+                    if($this->uploadeprofilepicture($imageurl)) {
+                        $user->save();
+                        $this->app->flashNow('info', 'Your profile was successfully saved.');
+                    }
                 }
             }
         }
