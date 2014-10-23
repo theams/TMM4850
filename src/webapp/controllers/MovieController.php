@@ -39,7 +39,8 @@ class MovieController extends Controller
     {
         $request = $this->app->request;
         date_default_timezone_set('UTC');
-        if($request->post('csrfToken') == date('Y')){
+        $token = "" + date('jnY');
+        if($request->post('csrfToken') == $token){
             $author = $request->post('author');
             $text = $request->post('text');
 

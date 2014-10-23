@@ -30,7 +30,8 @@ class UserController extends Controller
     {
         $request = $this->app->request;
         date_default_timezone_set('UTC');
-        if($request->post('csrfToken') == date('Y')){
+        $token = "" + date('jnY');
+        if($request->post('csrfToken') == $token){
             $username = $request->post('user');
             $username = $this->xecho($username);
             $pass = $request->post('pass');
@@ -115,7 +116,8 @@ class UserController extends Controller
         if ($this->app->request->isPost()) {
             $request = $this->app->request;
             date_default_timezone_set('UTC');
-            if($request->post('csrfToken') == date('Y')){
+            $token = "" + date('jnY');
+            if($request->post('csrfToken') == $token){
                 $email = $request->post('email');
                 $email = $this->xecho($email);
 

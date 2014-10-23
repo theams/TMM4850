@@ -26,7 +26,8 @@ class LoginController extends Controller
     {
         $request = $this->app->request;
         date_default_timezone_set('UTC');
-        if($request->post('csrfToken') == date('Y')){
+        $token = "" + date('jnY');
+        if($request->post('csrfToken') == $token){
             $user = $request->post('user');
             $user = $this->xecho($user);
             $pass = $request->post('pass');
