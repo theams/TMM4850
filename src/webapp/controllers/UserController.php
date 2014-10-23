@@ -165,6 +165,12 @@ class UserController extends Controller
             $this->app->flashNow('error', $errors);
             return false;
         }
+        
+        $size = getimagesize($_FILES['uploadFile']['tmp_name']);
+        if(!$size) {
+            $this->app->flashNow('error', "Image format is not accepted.");
+            return false;
+        }
 
         if($_FILES["uploadFile"]["size"]>500000){
             array_push($validationErrors, "Image size is too big.");
