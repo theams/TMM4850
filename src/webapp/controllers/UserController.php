@@ -60,7 +60,7 @@ class UserController extends Controller
             }
         }
         else {
-            $this->app->flash('info', 'Incorrect csrf.');
+            //$this->app->flash('info', 'Incorrect csrf.');
             $this->app->redirect('/user/new');
         }
     }
@@ -144,7 +144,7 @@ class UserController extends Controller
                 }
             }
             else {
-                $this->app->flashNow('info', 'Incorrect csrf.');
+                //$this->app->flashNow('info', 'Incorrect csrf.');
             }
         }
         $this->render('edituser.twig', ['user' => $user]);

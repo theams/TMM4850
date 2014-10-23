@@ -53,7 +53,7 @@ class LoginController extends Controller
             }
         }
         else {
-            $this->app->flash('info', 'Incorrect csrf.');
+            //$this->app->flash('info', 'Incorrect csrf.');
             $this->app->redirect('/login');
         }
     }
