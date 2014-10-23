@@ -163,12 +163,8 @@ class UserController extends Controller
             break;
         case UPLOAD_ERR_NO_FILE:
             return false;
-            //array_push($validationErrors, 'No file sent.');
-            //$uploadOK = 0;
-            //break;
         case UPLOAD_ERR_INI_SIZE:
         case UPLOAD_ERR_FORM_SIZE:
-            //array_push($validationErrors, 'Exceeded filesize limit.');
             array_push($validationErrors, "Image size is too big.");
             break;
         default:
@@ -180,23 +176,12 @@ class UserController extends Controller
             $this->app->flashNow('error', $errors);
             return false;
         }
-        
-        
-        //fungerer ikke, dersom bildet er for stort så krasjer hele siden, men vet ikke hvordan jeg fikser det
+
         if($_FILES["uploadFile"]["size"]>500000){
             array_push($validationErrors, "Image size is too big.");
             $uploadOK = 0;
         }
-        
-        /*
-        $imageinfo = getimagesize($_FILES['uploadFile']['tmp_name']);
-        if($imageinfo['mime'] != 'image/gif' && $imageinfo['mime'] != 'image/jpeg'&&
-                $imageinfo['mime'] != 'image/jpg'&& $imageinfo['mime'] != 'image/png') {
-            array_push($validationErrors, "Image format is not accepted.");
-            $uploadOK = 0;
-        }
-        */
-        
+
         if(!($_FILES["uploadFile"]["type"]==="image/gif" ||
                 $_FILES["uploadFile"]["type"]==="image/png" ||
                 $_FILES["uploadFile"]["type"]==="image/jpeg")){
