@@ -37,17 +37,25 @@ class MovieController extends Controller
 
     function addReview($id)
     {
-        $author = $this->app->request->post('author');
-        $text = $this->app->request->post('text');
+        $request = $this->app->request;
+        date_default_timezone_set('UTC');
+        if($request->post('csrfToken') == date('Y')){
+            $author = $request->post('author');
+            $text = $request->post('text');
 
-        $review = MovieReview::makeEmpty();
-        $review->setAuthor($author);
-        $review->setText($text);
-        $review->setMovieId($id);
+            $review = MovieReview::makeEmpty();
+            $review->setAuthor($author);
+            $review->setText($text);
+            $review->setMovieId($id);
 
-        $review->save();
+            $review->save();
 
-        $this->app->flash('info', 'The review was successfully saved.');
-        $this->app->redirect('/movies/' . $id);
+            $this->app->flash('info', 'The review was successfully saved.');
+            $this->app->redirect('/movies/' . $id);
+        }
+        else {
+            //$this->app->flash('info', 'Incorrect csrf.');
+            $this->app->redirect('/movies/' . $id);
+        }
     }
 }

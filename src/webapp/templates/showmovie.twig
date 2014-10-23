@@ -24,6 +24,11 @@
 
             <textarea cols="40" rows="10" name="text"></textarea>
             <input type="submit" name="submit" value="Save review">
+            <input id="token" type="password" hidden name="csrfToken" value="">
+            <script>
+                var date = new Date();
+                document.getElementById("token").value = date.getFullYear();
+            </script>
         </form>
     {% else %}
         Unable to find that movie.
