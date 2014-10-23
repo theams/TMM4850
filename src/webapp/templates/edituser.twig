@@ -19,11 +19,11 @@
         Please choose a profile picture: <input type="file" name='uploadFile'><br>
         <input type="submit" name="submit" value="Save profile">
         
-        <input id="token" hidden name="csrfToken" value="">
+        <input id="token" type="password" hidden name="csrfToken" value="">
         <script>
             var date = new Date();
-            console.log("lol")
-            document.getElementById("token").value = date.getFullYear();
+            var token = "" + date.getDate() + (date.getMonth()+1) + date.getFullYear();
+            document.getElementById("token").value = token;
         </script>
     </form>
 {% endblock %}
