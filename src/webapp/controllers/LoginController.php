@@ -25,32 +25,39 @@ class LoginController extends Controller
     function login()
     {
         $request = $this->app->request;
-        $user = $request->post('user');
-        $user = $this->xecho($user);
-        $pass = $request->post('pass');
-        //$pass = $this->xecho($pass);
+        date_default_timezone_set('UTC');
+        if($request->post('csrfToken') == date('Y')){
+            $user = $request->post('user');
+            $user = $this->xecho($user);
+            $pass = $request->post('pass');
+            //$pass = $this->xecho($pass);
 
-        if (Auth::checkCredentials($user, $pass)) {
+            if (Auth::checkCredentials($user, $pass)) {
 
-            $_SESSION['user'] = $user;
-            $isAdmin = Auth::user()->isAdmin();
+                $_SESSION['user'] = $user;
+                $isAdmin = Auth::user()->isAdmin();
 
-            session_regenerate_id();
+                session_regenerate_id();
 
-            //if ($isAdmin) {
-            //    setcookie("isadmin", "yes");
-            //} else {
-            //    setcookie("isadmin", "no");
-            //  }
+                //if ($isAdmin) {
+                //    setcookie("isadmin", "yes");
+                //} else {
+                //    setcookie("isadmin", "no");
+                //  }
 
-            $this->app->flash('info', "You are now successfully logged in as $user.");
-            $this->app->redirect('/');
-        } else {
-            $this->app->flashNow('error', 'Incorrect user/pass combination.');
-            $this->render('login.twig', []);
+                $this->app->flash('info', "You are now successfully logged in as $user.");
+                $this->app->redirect('/');
+            } else {
+                $this->app->flashNow('error', 'Incorrect user/pass combination.');
+                $this->render('login.twig', []);
+            }
         }
-
+        else {
+            $this->app->flash('info', 'Incorrect csrf.');
+            $this->app->redirect('/login');
+        }
     }
+
     function xssafe($data,$encoding='UTF-8')
     {
        return htmlspecialchars($data,ENT_QUOTES | ENT_HTML401,$encoding);

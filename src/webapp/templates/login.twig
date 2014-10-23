@@ -13,6 +13,11 @@
 <label>Password: </label>
 <input type="password" name="pass"> <br />
 <input type="submit" name="submit" value="Log in">
+<input id="token" type="password" hidden name="csrfToken" value="">
+        <script>
+            var date = new Date();
+            document.getElementById("token").value = date.getFullYear();
+        </script>
 </form>
 <div>
     <a href="/resetPassword">Forgot your password?</a>

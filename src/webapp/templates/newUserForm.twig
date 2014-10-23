@@ -27,5 +27,10 @@
 <label>Password: </label>
 <input type="password" name="pass" required> <br />
 <input type="submit" name="submit" value="Create new user">
+<input id="token" type="password" hidden name="csrfToken" value="">
+        <script>
+            var date = new Date();
+            document.getElementById("token").value = date.getFullYear();
+        </script>
 </form>
 {% endblock %}

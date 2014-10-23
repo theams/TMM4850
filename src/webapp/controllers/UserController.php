@@ -29,32 +29,39 @@ class UserController extends Controller
     function create()
     {
         $request = $this->app->request;
-        $username = $request->post('user');
-        $username = $this->xecho($username);
-        $pass = $request->post('pass');
-        //$pass = xecho($pass);
-        $securityquestion = $request->post('securityquestion');
-        $securityquestion = $this->xecho($securityquestion);
-        $securityanwser = $request->post('securityanswer');
-        $securityanwser = $this->xecho($securityanwser);
+        date_default_timezone_set('UTC');
+        if($request->post('csrfToken') == date('Y')){
+            $username = $request->post('user');
+            $username = $this->xecho($username);
+            $pass = $request->post('pass');
+            //$pass = xecho($pass);
+            $securityquestion = $request->post('securityquestion');
+            $securityquestion = $this->xecho($securityquestion);
+            $securityanwser = $request->post('securityanswer');
+            $securityanwser = $this->xecho($securityanwser);
 
-        $hashed = Hash::make($pass);
-        $hashedanwser = Hash::make($securityanwser);
+            $hashed = Hash::make($pass);
+            $hashedanwser = Hash::make($securityanwser);
 
-        $user = $this->makeUserData($hashed,$hashedanwser,$securityquestion,$username);
+            $user = $this->makeUserData($hashed,$hashedanwser,$securityquestion,$username);
 
-        $validationErrors = User::validate($user);
-        $validationErrorsExtended = User::validateSecurity($securityquestion, $securityanwser, $validationErrors);
-        $validationErrorsExtended2 = User::validatePass($pass, $validationErrorsExtended);
+            $validationErrors = User::validate($user);
+            $validationErrorsExtended = User::validateSecurity($securityquestion, $securityanwser, $validationErrors);
+            $validationErrorsExtended2 = User::validatePass($pass, $validationErrorsExtended);
 
-        if (sizeof($validationErrorsExtended2) > 0) {
-            $errors = join("<br>\n", $validationErrorsExtended2);
-            $this->app->flashNow('error', $errors);
-            $this->render('newUserForm.twig', ['username' => $username]);
-        } else {
-            $user->save();
-            $this->app->flash('info', 'Thanks for creating a user. Now log in.');
-            $this->app->redirect('/login');
+            if (sizeof($validationErrorsExtended2) > 0) {
+                $errors = join("<br>\n", $validationErrorsExtended2);
+                $this->app->flashNow('error', $errors);
+                $this->render('newUserForm.twig', ['username' => $username]);
+            } else {
+                $user->save();
+                $this->app->flash('info', 'Thanks for creating a user. Now log in.');
+                $this->app->redirect('/login');
+            }
+        }
+        else {
+            $this->app->flash('info', 'Incorrect csrf.');
+            $this->app->redirect('/user/new');
         }
     }
     
@@ -107,7 +114,8 @@ class UserController extends Controller
         }
         if ($this->app->request->isPost()) {
             $request = $this->app->request;
-            if($request->post('csrfToken') == 2014){
+            date_default_timezone_set('UTC');
+            if($request->post('csrfToken') == date('Y')){
                 $email = $request->post('email');
                 $email = $this->xecho($email);
 
@@ -134,6 +142,9 @@ class UserController extends Controller
                         $this->app->flashNow('info', 'Your profile was successfully saved.');
                     }
                 }
+            }
+            else {
+                $this->app->flashNow('info', 'Incorrect csrf.');
             }
         }
         $this->render('edituser.twig', ['user' => $user]);
