@@ -1,5 +1,5 @@
-<?php
-
+<?ph
+// this comment is made by the One - Bjorkto.
 namespace tdt4237\webapp;
 
 class Hash
