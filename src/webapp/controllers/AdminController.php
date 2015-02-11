@@ -4,7 +4,7 @@ namespace tdt4237\webapp\controllers;
 
 use tdt4237\webapp\Auth;
 use tdt4237\webapp\models\User;
-
+		//tester tester tester!!!!
 class AdminController extends Controller
 {
     function __construct()
