@@ -1,4 +1,5 @@
 <?php
+//kommentar i app.php.
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $app = new \Slim\Slim([
